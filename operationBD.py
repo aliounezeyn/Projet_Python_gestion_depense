@@ -224,7 +224,7 @@ def verifierUser(nom,mot_de_passe):
             if result == None :
                 return False
             else:
-                return True
+                return nom
     except:
         print("erreur selection: ", sql)
         return False
