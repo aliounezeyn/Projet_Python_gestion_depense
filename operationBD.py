@@ -61,6 +61,21 @@ def selectAllRows(table,param,valeur):
     finally:
         connection.close()
 
+#fonction pour selectioner une seule ligne d'une table, chemps[param]=valeur
+def selectTable(table):
+    connection=dataBaseConnection()
+    sql = "SELECT * FROM {} ".format(table)
+    print(sql)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    except:
+        print("erreur selection: ", sql)
+        return False
+    finally:
+        connection.close()
 
 #Operations sur la table BUDGET
 #insertion [mise a jour de l'etat du budget]
