@@ -11,6 +11,7 @@ def dataBaseConnection():
         return connection
     except :
         print("errreur de connexion a la base")
+        exit()
 
 
 #fonction pour executer les operation: INSET, UPDATE et DELETE
