@@ -1,0 +1,2 @@
+tkinter checkbuton properties
+https://mail.python.org/pipermail/python-list/2003-November/202606.html
