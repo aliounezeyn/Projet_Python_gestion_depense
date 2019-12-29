@@ -13,7 +13,7 @@ class fenetreAjouterBudget:
             self.closed=True
             print("fentreAjouterBudget.message: SUC")
         else:
-            print("fenetreConnexion.message: ERR")
+            print("fenetreAjout.message: ERR_val_inc")
             self.labelText.set("ERR: valeur incorrecte")
 
     closed=False

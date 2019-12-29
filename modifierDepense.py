@@ -34,7 +34,7 @@ class fenetreModifierDepense:
         self.master = tk.Tk()
         self.master.geometry("800x400")
         self.master.resizable(False, False)
-        self.master.title("projetPython | Gestion des depenses | Ajouter Depense")
+        self.master.title("projetPython | Gestion des depenses | Modifier Depense")
 
         f2 = tk.Frame(self.master, height=200, width=100)
         f2.pack()

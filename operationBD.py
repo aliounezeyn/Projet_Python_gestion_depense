@@ -1,5 +1,5 @@
 import pymysql.cursors
-
+from datetime import date
 
 def dataBaseConnection():
     try:
@@ -20,6 +20,9 @@ def executerRequete(requete):
     try:
         with connection.cursor() as cursor:
             cursor.execute(requete)
+
+
+
         connection.commit()
         print("SUC Req Exec: ",requete)
         return True
@@ -129,13 +132,20 @@ def deleteBudget(id_budget):
         connection.close()
 
 #Operations sur la table DEPENSE
-def insertDepense(montant,type,categorie, date_ajout,description):
+def insertDepense(montant,type="in",categorie="", date_ajout="",description=""):
     connection = dataBaseConnection()
+    if type=="":
+        type="in"
+    if date_ajout=="":
+        date_ajout = date.today()
     sql = "INSERT INTO depense (montant,type,categorie, date_ajout,description) VALUES (%s,%s,%s,%s,%s)"
+    #print("INSERT INTO depense (montant,type,categorie, date_ajout,description) VALUES ('{}','{}','{}','{}','{}')".format(montant,type,categorie, date_ajout,description))
+    #print(sql)
+    sql="INSERT INTO depense (montant,type,categorie, date_ajout,description) VALUES ('{}','{}','{}','{}','{}')".format(montant,type,categorie, date_ajout,description)
     print(sql)
     try:
         with connection.cursor() as cursor:
-            cursor.execute(sql, (montant,type,categorie, date_ajout,description))
+            cursor.execute(sql)#, (montant,type,categorie, date_ajout,description))
         connection.commit()
         print("SUC Req Exec: ", sql)
         return True
@@ -246,3 +256,54 @@ def verifierUser(nom,mot_de_passe):
         return False
     finally:
         connection.close()
+
+def selectEtatActuelBudget():
+    connection = dataBaseConnection()
+    sql="(select (((select budget.montant from budget where (budget.date_ajout = (select max(date_ajout) from budget))) + (select sum(depense.montant) from depense where ((depense.type = 'in') and (depense.date_ajout > (select max(date_ajout) from budget))))) - (select sum(depense.montant) from depense where ((depense.type = 'out') and (depense.date_ajout > (select max(date_ajout) from budget))))) AS valeur)"
+    print(sql)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            result = cursor.fetchone()
+            return result
+    except:
+        print("erreur selection: ", sql)
+        return False
+    finally:
+        connection.close()
+
+def valeurEtatActuelBudget():
+    val=selectEtatActuelBudget()
+    return val['valeur']
+
+def sommeDepense(type):
+    connection = dataBaseConnection()
+    sql = "select sum(montant) as valeur from depense where type='{}' ".format(type) #and date_ajout <= (select max(date_ajout) from budget)
+    print(sql)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            result = cursor.fetchone()
+            return result['valeur']
+    except:
+        print("erreur selection: ", sql)
+        return False
+    finally:
+        connection.close()
+
+def lesTypeParCategorie(type):
+    connection = dataBaseConnection()
+    sql = "select categorie, sum(montant) as montant from depense where type like '{}' group by categorie order by montant desc".format(type)  # and date_ajout <= (select max(date_ajout) from budget)
+    print(sql)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    except:
+        print("erreur selection: ", sql)
+        return False
+    finally:
+        connection.close()
+
+
